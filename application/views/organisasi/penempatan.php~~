@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title><?= $title; ?></title>
+    <?php $this->load->view("admin/_partials/head.php"); ?>
+    <script type="text/javascript" src="<?php echo base_url('assets/tabulator/jquery.min.js') ?>"></script>
+    <script type="text/javascript" src="<?php echo base_url('assets/tabulator/jquery-ui.min.js') ?>"></script>
+    <!-- Tabulator -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/3.5.2/css/semantic-ui/tabulator_semantic-ui.min.css" rel="stylesheet">
+    <script type="text/javascript" src="<?php echo base_url('assets/tabulator/tabulator.min.js') ?>"></script>
+    <!-- end Tabulator -->
+</head>
+
+<body id="page-top" class="sidebar-toggled">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <?php $this->load->view("admin/_partials/sidebar-toggled.php"); ?>
+
+        <?php $this->load->view("admin/_partials/topbar.php"); ?>
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+
+            <?php $this->load->view("admin/_partials/breadcrumb.php"); ?>
+
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                <h1 class="h3 mb-0 text-gray-800"><?= $title; ?></h1>
+            </div>
+
+            <div class="row">
+                <div id="hasil_operasi" class="alert-success col-sm-12"></div>
+                <div class="col-lg">
+                    <?= $this->session->flashdata('message'); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <div id="pegawai">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <div id="jabatan">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 text-center mt-2" id="control-pegawai" data-toggle="collapse">
+                    <button class="btn btn-primary btn-sm" id="tempatkan">
+                        Tempatkan
+                    </button>
+                    <button class="btn btn-primary btn-sm" id="hapus">
+                        Hapus Semua
+                    </button>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.container-fluid -->
+
+    </div>
+    <!-- End of Main Content -->
+
+    <!-- Footer -->
+    <?php $this->load->view("admin/_partials/footer.php"); ?>
+
+    <?php
+    //$pejabat_lop = json_encode($pegawai);
+    ?>
+    <script type="text/javascript">
+        $("#pegawai").tabulator({
+            selectable: 1,
+            pagination: "local",
+            paginationSize: 10,
+            layout: "fitColumns",
+            footerElement: $("<div class='tabulator-footer' align=left><span id='totaldata'>Jumlah Data: </span></div>"),
+            columns: [{
+                    title: "No.",
+                    field: "no",
+                    formatter: "rownum",
+                    width: 50,
+                    align: "right",
+                    headerSort: false
+                },
+                {
+                    title: "Nama",
+                    field: "nama_pegawai",
+                    headerFilter: "input",
+                    sorter: "string"
+                },
+                {
+                    title: "NIP",
+                    width: 175,
+                    field: "nip",
+                    sorter: "string",
+                    headerFilter: "input"
+                },
+                {
+                    title: "ID",
+                    field: "id_pegawai",
+                    headerFilter: "input",
+                    visible: false
+                }
+
+
+            ],
+            rowSelected: function(row) {
+                $("#control-pegawai").show();
+                code = (row.getData().id_pegawai);
+
+                //var url = 'drh_content.php';
+            },
+            rowDeselected: function(row) {
+                $("#control-pegawai").hide();
+            },
+            dataLoaded: function(data) {
+                $("#totaldata").text("Jumlah Data: " + $("#pegawai").tabulator("getData").length);
+            },
+
+        });
+        $("#pegawai").tabulator("setData", <?= $pejabat_lop = json_encode($pegawai); ?>);
+        $("#tempatkan").click(function() {
+
+            var selectedRow = $('#pegawai').tabulator("getSelectedRows");
+            //alert (selectedRow[0].getData().id_pegawai);
+            //alert ('csss');
+            code = (selectedRow[0].getData().id_pegawai);
+            // alert(code);
+            var selectedRow2 = $('#jabatan').tabulator("getSelectedRows");
+            //alert (selectedRow[0].getData().id_pegawai);
+            //alert ('csss');
+            code2 = (selectedRow2[0].getData().id_jabatan);
+            // alert(code2);
+            var tmt = prompt("Masukkan TMTnya:", "<?php echo date("Y-m-d"); ?>");
+            if (tmt == null || tmt == "") {
+                return;
+            }
+            var url = 'penempatan_pejabat.php';
+            $.get(url, {
+                idp: code,
+                idj: code2,
+                tmt: tmt,
+                tahun: 2019
+                //prov: code, tahun: 20198
+            }).done(function(data) {
+                var konten = data;
+                //konten = "";
+                $('#hasil_operasi').html(konten);
+
+                //alert(code);
+                selectedRow[0].toggleSelect();
+                selectedRow2[0].toggleSelect();
+
+            });
+
+        });
+        $("#hapus").click(function() {
+            var r = confirm("Apakah anda yakin menghapus semua data pejabat?");
+            if (r != true) {
+                return;
+            };
+            var aksi = 'hapus_semua';
+            alert(aksi);
+            var url = 'penghapusan_pejabat.php';
+            $.get(url, {
+                aksi: aksi,
+                tahun: 2019
+                //prov: code, tahun: 20198
+            }).done(function(data) {
+                var konten = data;
+                //konten = "";
+                $('#hasil_operasi').html(konten);
+
+                //alert(code);
+            });
+
+        });
+        $("#jabatan").tabulator({
+            selectable: 1,
+            pagination: "local",
+            paginationSize: 10,
+            layout: "fitColumns",
+            footerElement: $("<div class='tabulator-footer' align=left><span id='totaldata'>Jumlah Data: </span></div>"),
+            columns: [{
+                    title: "No.",
+                    field: "no",
+                    formatter: "rownum",
+                    width: 50,
+                    align: "right",
+                    headerSort: false
+                },
+                {
+                    title: "Jabatan",
+                    field: "jabatan",
+                    headerFilter: "input",
+                    sorter: "string"
+                },
+                {
+                    //       title:"Kelas", width:59, field:"kelas", sorter:"string", headerFilter:"input"
+                    //      },
+                    //      {
+                    //       title:"B", width:20, field:"bezetthing", headerFilter:"input"
+                    //      },
+                    //      {
+                    //       title:"K", width:20, field:"kebutuhan", headerFilter:"input"
+                    //      },
+                    //      {
+                    title: "Jabatan Atasan",
+                    field: "jabatan_parent",
+                    headerFilter: "input"
+                },
+                {
+                    title: "Status",
+                    field: "status_jabatan",
+                    headerFilter: "input",
+                    width: 30,
+                },
+                {
+                    title: "ID",
+                    width: 10,
+                    field: "id_jabatan",
+                    headerFilter: "input",
+                    visible: true
+                }
+
+
+            ],
+            rowClick: function(e, row) {
+                code = (row.getData().id_pegawai);
+                //	alert(code);
+                $("html, body").animate({
+                    scrollTop: 670
+                }, 1000);
+                //var url = 'drh_content.php';
+                /*           $.get(url,
+                            {
+                             idp: code, tahun: 2019
+                             //prov: code, tahun: 20198
+                            }
+                           ).success(function(data) {
+                             var konten = data;
+                             //konten = "";
+                             $('#tabular').html(konten);
+                            });
+                  */
+            },
+            dataLoaded: function(data) {
+                $("#totaldata").text("Jumlah Data: " + $("#jabatan").tabulator("getData").length);
+            },
+
+        });
+        $("#jabatan").tabulator("setData", <?= $jabatan_lop = json_encode($jabatan); ?>);
+    </script>
+    <?php $this->load->view("admin/_partials/modal.php"); ?>
+    <?php $this->load->view("admin/_partials/scrolltop.php"); ?>
+    <?php $this->load->view("admin/_partials/js.php") ?>
+</body>
+
+</html>

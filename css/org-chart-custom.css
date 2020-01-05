@@ -1,0 +1,52 @@
+img {
+    float:left; 
+    height:60px; 
+    width:60px;
+}
+.center-cropped {
+    object-fit: cover; /* Do not scale the image */
+    object-position: top; /* Center the image within the element */
+    height: 60px;
+    width: 60px;
+}
+.jabatan {
+    float:right; 
+    border-bottom:1px solid;
+    height:30px; 
+    width:140px;  
+    vertical-align: bottom;
+}
+.jabatan p {
+    height: 30px;
+    width: 140px;
+    display: table-cell;
+    vertical-align: middle;
+    padding-bottom: 3px;
+}
+.jabatan p a {
+    text-decoration: none;
+}
+.pegawai {
+    float:right; 
+    height:30px; 
+    width:140px; 
+    vertical-align: top;
+}
+.pegawai p {
+    font-size:-1; 
+    font-weight:bold; 
+    color: #1e4775;
+}
+.pegawai p a {
+    text-decoration: none;
+}
+.row {
+    height: 320px;
+}
+.row #org {
+    display: none;
+}
+.row .orgChart {
+    overflow: auto;
+    font-size: 60%;
+}

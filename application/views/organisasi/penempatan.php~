@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title><?= $title; ?></title>
+    <?php $this->load->view("admin/_partials/head.php"); ?>
+    <link rel="stylesheet" href="<?= base_url('css/select.dataTables.min.css') ?>">
+    <style>
+        .table {
+            font-size: 13px;
+        }
+
+        .dataTables_info {
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <?php $this->load->view("admin/_partials/sidebar.php"); ?>
+
+        <?php $this->load->view("admin/_partials/topbar.php"); ?>
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+
+            <?php $this->load->view("admin/_partials/breadcrumb.php"); ?>
+
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                <h1 class="h3 mb-0 text-gray-800"><?= $title; ?></h1>
+            </div>
+
+            <div class="row">
+                <div class="col-lg">
+                    <?= $this->session->flashdata('message'); ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-bordered" id="Pegawai" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>Nama</th>
+                                            <th>NIP</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        $no = 0;
+                                        foreach ($pegawai as $row) :
+                                            $no++; ?>
+                                            <tr>
+                                                <td width="1px">
+                                                    <?= $no ?>.
+                                                </td>
+                                                <td>
+                                                    <?= $row->nama_pegawai ?>
+                                                </td>
+                                                <td>
+                                                    <?= $row->nip ?>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                    <tfoot>
+                                        <th>No.</th>
+                                        <th>Nama</th>
+                                        <th>NIP</th>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-bordered" id="Jabatan" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>Jabatan</th>
+                                            <th>Jabatan Atasan</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        $no = 0;
+                                        foreach ($jabatan as $row) :
+                                            $no++; ?>
+                                            <tr>
+                                                <td width="1px">
+                                                    <?= $no ?>.
+                                                </td>
+                                                <td>
+                                                    <?= $row->jabatan ?>
+                                                </td>
+                                                <td>
+                                                    <?= $row->jabatan_parent ?>
+                                                </td>
+                                                <td>
+                                                    <?= $row->status_jabatan ?>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                    <tfoot>
+                                        <th>No.</th>
+                                        <th>Jabatan</th>
+                                        <th>Jabatan Atasan</th>
+                                        <th>Status</th>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.container-fluid -->
+
+    </div>
+    <!-- End of Main Content -->
+
+    <!-- Footer -->
+    <?php $this->load->view("admin/_partials/footer.php"); ?>
+
+    </div>
+    <!-- /.content Wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <?php $this->load->view("admin/_partials/modal.php"); ?>
+    <?php $this->load->view("admin/_partials/scrolltop.php"); ?>
+    <?php $this->load->view("admin/_partials/js.php") ?>
+    <script src="<?= base_url('js/dataTables.select.min.js') ?>"></script>
+    <script>
+        $(document).ready(function() {
+            // Setup - add a text input to each footer cell
+            $('#Jabatan tfoot th:gt(0)').each(function() {
+                var title = $(this).text();
+                $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+            });
+            // DataTable
+            var table1 = $('#Jabatan').DataTable({
+                scrollY: "350px",
+                scrollX: true,
+                scrollCollapse: true,
+                paging: false,
+                select: true,
+                "columnDefs": [{
+                        "targets": [0, 3],
+                        "width": "1px"
+                    },
+                    {
+                        "targets": 1,
+                        "width": "50%"
+                    }
+                ]
+            });
+            // Apply the search
+            table1.columns().every(function() {
+                var that = this;
+
+                $('input', this.footer()).on('keyup change', function() {
+                    if (that.search() !== this.value) {
+                        that
+                            .search(this.value)
+                            .draw();
+                    }
+                });
+            });
+            // Setup - add a text input to each footer cell
+            $('#Pegawai tfoot th:gt(0)').each(function() {
+                var title = $(this).text();
+                $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+            });
+            var table2 = $('#Pegawai').DataTable({
+                scrollY: "350px",
+                scrollX: true,
+                scrollCollapse: true,
+                paging: false,
+                select: true,
+                "columnDefs": [{
+                    "targets": 0,
+                    "width": "1px"
+                }]
+            });
+            // Apply the search
+            table2.columns().every(function() {
+                var that = this;
+
+                $('input', this.footer()).on('keyup change', function() {
+                    if (that.search() !== this.value) {
+                        that
+                            .search(this.value)
+                            .draw();
+                    }
+                });
+            });
+            $(".dataTables_filter").hide();
+            new $.fn.dataTable.FixedColumns(table);
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,33 @@
+/**
+ * = Breadcrumbs
+ */
+
+ .breadcrumb-item,
+ .breadcrumb-item a {
+     font-weight: 300;
+     font-size: 0.75rem;
+ }
+ 
+ @media (min-width: 576px) {
+     .breadcrumb-item,
+     .breadcrumb-item a {
+         font-size: 1rem;
+     }
+ }
+ 
+ .breadcrumb-item.active {
+     font-weight: 400;
+ }
+ 
+ .breadcrumb-item+.breadcrumb-item:before {
+     content: "\f101";
+     font-family: "Font Awesome 5 Free";
+     font-weight: 900;
+     font-size: .625rem;
+     color: #697992;
+ }
+ 
+ .breadcrumb-transparent {
+     background: transparent;
+     padding: 0;
+ }
